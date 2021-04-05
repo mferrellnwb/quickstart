@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
-Copyright (c) 2016 Google Inc.
-Licensed under the Apache License, Version 2.0 (the "License");
+Copyright ( c ) 2016 Google Inc.
+Licensed under the Apache License, Version 2.0 ( the "License" );
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 http://www.apache.org/licenses/LICENSE-2.0
@@ -16,19 +16,15 @@ limitations under the License.
   <meta charset=utf-8 />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Firebase Cloud Messaging Example</title>
-
   <!-- Material Design Theming -->
   <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.orange-indigo.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
-
   <link rel="stylesheet" href="main.css">
-
   <link rel="manifest" href="/manifest.json">
 </head>
 <body>
 <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
-
   <!-- Header section containing title -->
   <header class="mdl-layout__header mdl-color-text--white mdl-color--light-blue-700">
     <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
@@ -37,10 +33,8 @@ limitations under the License.
       </div>
     </div>
   </header>
-
   <main class="mdl-layout__content mdl-color--grey-100">
     <div class="mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-grid">
-
       <!-- Container for the Table of content -->
       <div class="mdl-card mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-cell--12-col-tablet mdl-cell--12-col-desktop">
         <div class="mdl-card__supporting-text mdl-color-text--grey-600">
@@ -64,160 +58,142 @@ limitations under the License.
           <div id="messages"></div>
         </div>
       </div>
-
     </div>
   </main>
 </div>
-
 <!-- Import and configure the Firebase SDK -->
 <!-- These scripts are made available when the app is served or deployed on Firebase Hosting -->
 <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
 <script src="/__/firebase/8.3.2/firebase-app.js"></script>
 <script src="/__/firebase/8.3.2/firebase-messaging.js"></script>
 <script src="/__/firebase/init.js"></script>
-
 <script>
   // Retrieve Firebase Messaging object.
   const messaging = firebase.messaging();
-
   // IDs of divs that display registration token UI or request permission UI.
-  const tokenDivId = 'token_div';
-  const permissionDivId = 'permission_div';
-
+  const tokenDivId = "token_div";
+  const permissionDivId = "permission_div";
   // Handle incoming messages. Called when:
   // - a message is received while the app has focus
   // - the user clicks on an app notification created by a service worker
   //   `messaging.onBackgroundMessage` handler.
-  messaging.onMessage((payload) => {
-    console.log('Message received. ', payload);
+  messaging.onMessage( ( payload ) => {
+    console.log( "Message received. ", payload );
     // Update the UI to include the received message.
-    appendMessage(payload);
-  });
-
+    appendMessage( payload );
+  } );
   function resetUI() {
     clearMessages();
-    showToken('loading...');
+    showToken( "loading..." );
     // Get registration token. Initially this makes a network call, once retrieved
     // subsequent calls to getToken will return from cache.
-    messaging.getToken({vapidKey: '<YOUR_PUBLIC_VAPID_KEY_HERE>'}).then((currentToken) => {
-      if (currentToken) {
-        sendTokenToServer(currentToken);
-        updateUIForPushEnabled(currentToken);
+    messaging.getToken( {
+      vapidKey: "BCDlqzzBfk4xweduK5UTKnz3PisKuRB5fSJ_k2gQk5eKsHRUGXCOuOXeV3nuW3aavgXOuJlgpay4ZTYelCAg64A"} ).then( ( currentToken ) => {
+      if ( currentToken ) {
+        sendTokenToServer( currentToken );
+        updateUIForPushEnabled( currentToken );
       } else {
         // Show permission request.
-        console.log('No registration token available. Request permission to generate one.');
+        console.log( "No registration token available. Request permission to generate one." );
         // Show permission UI.
         updateUIForPushPermissionRequired();
-        setTokenSentToServer(false);
+        setTokenSentToServer( false );
       }
-    }).catch((err) => {
-      console.log('An error occurred while retrieving token. ', err);
-      showToken('Error retrieving registration token. ', err);
-      setTokenSentToServer(false);
-    });
+    } ).catch( ( err ) => {
+      console.log( "An error occurred while retrieving token. ", err );
+      showToken( "Error retrieving registration token. ", err );
+      setTokenSentToServer( false );
+    } );
   }
-
-
-  function showToken(currentToken) {
+  function showToken( currentToken ) {
     // Show token in console and UI.
-    const tokenElement = document.querySelector('#token');
+    const tokenElement = document.querySelector( "#token" );
     tokenElement.textContent = currentToken;
   }
-
   // Send the registration token your application server, so that it can:
   // - send messages back to this app
   // - subscribe/unsubscribe the token from topics
-  function sendTokenToServer(currentToken) {
-    if (!isTokenSentToServer()) {
-      console.log('Sending token to server...');
-      // TODO(developer): Send the current token to your server.
-      setTokenSentToServer(true);
+  function sendTokenToServer( currentToken ) {
+    if ( !isTokenSentToServer() ) {
+      console.log( "Sending token to server..." );
+      // TODO( developer ): Send the current token to your server.
+      setTokenSentToServer( true );
     } else {
-      console.log('Token already sent to server so won\'t send it again ' +
-          'unless it changes');
+      console.log( "Token already sent to server so won\"t send it again " +
+          "unless it changes" );
     }
   }
-
   function isTokenSentToServer() {
-    return window.localStorage.getItem('sentToServer') === '1';
+    return window.localStorage.getItem( "sentToServer" ) === "1";
   }
-
-  function setTokenSentToServer(sent) {
-    window.localStorage.setItem('sentToServer', sent ? '1' : '0');
+  function setTokenSentToServer( sent ) {
+    window.localStorage.setItem( "sentToServer", sent ? "1" : "0" );
   }
-
-  function showHideDiv(divId, show) {
-    const div = document.querySelector('#' + divId);
-    if (show) {
-      div.style = 'display: visible';
+  function showHideDiv( divId, show ) {
+    const div = document.querySelector( "#" + divId );
+    if ( show ) {
+      div.style = "display: visible";
     } else {
-      div.style = 'display: none';
+      div.style = "display: none";
     }
   }
-
   function requestPermission() {
-    console.log('Requesting permission...');
-    Notification.requestPermission().then((permission) => {
-      if (permission === 'granted') {
-        console.log('Notification permission granted.');
-        // TODO(developer): Retrieve a registration token for use with FCM.
+    console.log( "Requesting permission..." );
+    Notification.requestPermission().then( ( permission ) => {
+      if ( permission === "granted" ) {
+        console.log( "Notification permission granted." );
+        // TODO( developer ): Retrieve a registration token for use with FCM.
         // In many cases once an app has been granted notification permission,
         // it should update its UI reflecting this.
         resetUI();
       } else {
-        console.log('Unable to get permission to notify.');
+        console.log( "Unable to get permission to notify." );
       }
-    });
+    } );
   }
-
   function deleteToken() {
     // Delete registration token.
-    messaging.getToken().then((currentToken) => {
-      messaging.deleteToken(currentToken).then(() => {
-        console.log('Token deleted.');
-        setTokenSentToServer(false);
+    messaging.getToken().then( ( currentToken ) => {
+      messaging.deleteToken( currentToken ).then( () => {
+        console.log( "Token deleted." );
+        setTokenSentToServer( false );
         // Once token is deleted update UI.
         resetUI();
-      }).catch((err) => {
-        console.log('Unable to delete token. ', err);
-      });
-    }).catch((err) => {
-      console.log('Error retrieving registration token. ', err);
-      showToken('Error retrieving registration token. ', err);
-    });
+      } ).catch( ( err ) => {
+        console.log( "Unable to delete token. ", err );
+      } );
+    } ).catch( ( err ) => {
+      console.log( "Error retrieving registration token. ", err );
+      showToken( "Error retrieving registration token. ", err );
+    } );
   }
-
   // Add a message to the messages element.
-  function appendMessage(payload) {
-    const messagesElement = document.querySelector('#messages');
-    const dataHeaderElement = document.createElement('h5');
-    const dataElement = document.createElement('pre');
-    dataElement.style = 'overflow-x:hidden;';
-    dataHeaderElement.textContent = 'Received message:';
-    dataElement.textContent = JSON.stringify(payload, null, 2);
-    messagesElement.appendChild(dataHeaderElement);
-    messagesElement.appendChild(dataElement);
+  function appendMessage( payload ) {
+    const messagesElement = document.querySelector( "#messages" );
+    const dataHeaderElement = document.createElement( "h5" );
+    const dataElement = document.createElement( "pre" );
+    dataElement.style = "overflow-x:hidden;";
+    dataHeaderElement.textContent = "Received message:";
+    dataElement.textContent = JSON.stringify( payload, null, 2 );
+    messagesElement.appendChild( dataHeaderElement );
+    messagesElement.appendChild( dataElement );
   }
-
   // Clear the messages element of all children.
   function clearMessages() {
-    const messagesElement = document.querySelector('#messages');
-    while (messagesElement.hasChildNodes()) {
-      messagesElement.removeChild(messagesElement.lastChild);
+    const messagesElement = document.querySelector( "#messages" );
+    while ( messagesElement.hasChildNodes() ) {
+      messagesElement.removeChild( messagesElement.lastChild );
     }
   }
-
-  function updateUIForPushEnabled(currentToken) {
-    showHideDiv(tokenDivId, true);
-    showHideDiv(permissionDivId, false);
-    showToken(currentToken);
+  function updateUIForPushEnabled( currentToken ) {
+    showHideDiv( tokenDivId, true );
+    showHideDiv( permissionDivId, false );
+    showToken( currentToken );
   }
-
   function updateUIForPushPermissionRequired() {
-    showHideDiv(tokenDivId, false);
-    showHideDiv(permissionDivId, true);
+    showHideDiv( tokenDivId, false );
+    showHideDiv( permissionDivId, true );
   }
-
   resetUI();
 </script>
 </body>
